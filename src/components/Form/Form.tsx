@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { CustomButton } from '../../styledComponents/button';
 import { CustomSlider } from '../../styledComponents/slider';
 import OrderForm from '../OrderForm/OrderForm';
+import Summary from '../Summary/Summary';
 import './Form.scss';
 
 interface Pokemon {
@@ -36,9 +37,11 @@ function Form() {
     error: false,
     helperText: '',
   });
+  const [range, setRange] = useState(60);
   const [region, setRegion] = useState('');
   const [selectedPokemon, setSelectedPokemon] = useState('');
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
+  const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedChip, setSelectedChip] = useState<CartItem>();
   const [totalCost, setTotalCost] = useState(0);
@@ -175,8 +178,8 @@ function Form() {
         <CustomSlider
           valueLabelDisplay='auto'
           aria-label='slider'
-          defaultValue={60}
           className='slider'
+          value={range}
         />
         <span className='slider-description'>
           How far is your nearest pokemon center? (In KMs)
@@ -271,9 +274,24 @@ function Form() {
           <div className='cost'>${totalCost}</div>
         </div>
 
-        <CustomButton className='finish-button' onClick={() => {}}>
+        <CustomButton
+          className='finish-button'
+          onClick={() => setSummaryDialogOpen(true)}
+        >
           START MY JOURNEY
         </CustomButton>
+
+        <Summary
+          open={summaryDialogOpen}
+          onClose={() => setSummaryDialogOpen(false)}
+          fullName={fullName.value}
+          codeName={codeName.value}
+          range={range}
+          region={region}
+          pokemon={selectedPokemon}
+          items={cart}
+          totalCost={totalCost}
+        />
       </div>
     </Container>
   );

@@ -5,6 +5,34 @@
   width: 488px !important;
   border-radius: 16px;
   flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 13px;
+      height: 13px;
+    }
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background-color: var(--g-100-silk);
+    border-radius: 10px;
+  }
+
+  /* Thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--g-500-granite);
+    border-radius: 10px;
+    border: 3px solid rgba(0, 0, 0, 0);
+    background-clip: content-box;
+  }
 
   .form-container {
     width: 334px;
