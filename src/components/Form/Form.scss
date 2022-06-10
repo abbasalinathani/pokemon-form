@@ -153,6 +153,7 @@
     .chip-container {
       display: flex;
       flex-wrap: wrap;
+      margin-bottom: 47px;
 
       .css-iqd1hh-MuiButtonBase-root-MuiChip-root .MuiChip-deleteIcon {
         color: #000000;
@@ -175,6 +176,31 @@
           background-color: #75F4FE;
         }
       }
+    }
+
+    .cost-container {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 40px;
+
+      .cost-label,
+      .cost {
+        font-family: Roboto;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 22px;
+        color: #889296;
+      }
+
+      .cost {
+        color: #393B3B;
+      }
+    }
+
+    .finish-button {
+      width: 200px;
+      margin-bottom: 80px;
     }
   }
 }

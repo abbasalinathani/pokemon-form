@@ -7,6 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { CustomButton } from '../../styledComponents/button';
 import { CustomSlider } from '../../styledComponents/slider';
 import OrderForm from '../OrderForm/OrderForm';
 import './Form.scss';
@@ -16,7 +17,8 @@ interface Pokemon {
   region: string;
 }
 
-interface CartItem {
+export interface CartItem {
+  id: string;
   item: string;
   quantity: number;
   cost: number;
@@ -38,6 +40,7 @@ function Form() {
   const [selectedPokemon, setSelectedPokemon] = useState('');
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedChip, setSelectedChip] = useState<CartItem>();
   const [totalCost, setTotalCost] = useState(0);
   const badNewName = 'Input text';
   const minLengthHelperText = 'Please enter at least 3 characters';
@@ -93,16 +96,40 @@ function Form() {
   };
 
   const onOrderDialogClose = (
+    id: string,
     item: string,
     quantity: number,
     bag: boolean,
     cost: number
   ) => {
     setOrderDialogOpen(false);
-    setCart([...cart, { item, quantity, bag, cost }]);
+    if (selectedChip) {
+      let cartItems = cart;
+      cartItems.forEach((cartItem) => {
+        if (selectedChip.id === cartItem.id) {
+          cartItem.item = item;
+          cartItem.quantity = quantity;
+          cartItem.bag = bag;
+          cartItem.cost = cost;
+        }
+      });
+      setSelectedChip(undefined);
+      setCart([...cartItems]);
+    } else {
+      setCart([...cart, { id, item, quantity, bag, cost }]);
+    }
+  };
+
+  const handleChipDelete = (index: number) => {
+    let cartItems = cart;
+    cartItems.splice(index, 1);
+    setCart([...cartItems]);
   };
 
   useEffect(() => {
+    let cost = 0;
+    cart.map((item) => (cost += item.cost));
+    setTotalCost(cost);
     console.log(cart);
   }, [cart]);
 
@@ -211,7 +238,11 @@ function Form() {
           </div>
         </div>
 
-        <OrderForm open={orderDialogOpen} onClose={onOrderDialogClose} />
+        <OrderForm
+          open={orderDialogOpen}
+          onClose={onOrderDialogClose}
+          selectedChip={selectedChip}
+        />
 
         <div className='chip-container'>
           {cart.length > 0 &&
@@ -225,12 +256,24 @@ function Form() {
                   </span>
                 }
                 className={`chip ${item.bag ? 'chip-with-bag' : ''}`}
-                onDelete={() => {}}
+                onDelete={() => handleChipDelete(index)}
                 clickable={true}
-                onClick={() => {}}
+                onClick={() => {
+                  setOrderDialogOpen(true);
+                  setSelectedChip(item);
+                }}
               />
             ))}
         </div>
+
+        <div className='cost-container'>
+          <div className='cost-label'>Total Cost</div>
+          <div className='cost'>${totalCost}</div>
+        </div>
+
+        <CustomButton className='finish-button' onClick={() => {}}>
+          START MY JOURNEY
+        </CustomButton>
       </div>
     </Container>
   );

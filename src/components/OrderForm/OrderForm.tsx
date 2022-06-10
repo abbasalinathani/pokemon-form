@@ -4,17 +4,20 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Switch,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { CustomButton } from '../../styledComponents/button';
 import { CustomSlider } from '../../styledComponents/slider';
 import { CustomSwitch } from '../../styledComponents/switch';
+import { CartItem } from '../Form/Form';
 import './OrderForm.scss';
+import { v4 as uuid } from 'uuid';
 
 export interface SimpleDialogProps {
+  selectedChip: CartItem | undefined;
   open: boolean;
   onClose: (
+    id: string,
     selectedItem: string,
     quantity: number,
     needBag: boolean,
@@ -28,11 +31,12 @@ interface OrderItem {
 }
 
 function OrderForm(props: SimpleDialogProps) {
-  const { open, onClose } = props;
+  const { open, onClose, selectedChip } = props;
   const [selectedItem, setSelectedItem] = useState('');
   const [quantity, setQuantity] = useState(2);
   const [needBag, setNeedBag] = useState(true);
   const [cost, setCost] = useState(0);
+  // const [selectedChipItem, setSelectedChipItem] = useState(0);
   const orderItems: OrderItem[] = [
     { name: 'Poke Ball', cost: 5 },
     { name: 'Great Ball', cost: 10 },
@@ -43,6 +47,16 @@ function OrderForm(props: SimpleDialogProps) {
   useEffect(() => {
     updateCost();
   }, [selectedItem, quantity, needBag]);
+
+  useEffect(() => {
+    if (selectedChip) {
+      const { item, quantity, bag } = selectedChip;
+      setSelectedItem(item);
+      setQuantity(quantity);
+      setNeedBag(bag);
+    }
+    updateCost();
+  }, [selectedChip]);
 
   const onQuantityChange = (event: Event, newValue: number | number[]) => {
     setQuantity(newValue as number);
@@ -66,7 +80,13 @@ function OrderForm(props: SimpleDialogProps) {
   };
 
   const closeOrderDialog = () => {
-    onClose(selectedItem, quantity, needBag, cost);
+    onClose(
+      selectedChip ? selectedChip.id : uuid(),
+      selectedItem,
+      quantity,
+      needBag,
+      cost
+    );
   };
 
   return (
