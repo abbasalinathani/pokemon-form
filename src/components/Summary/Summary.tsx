@@ -60,7 +60,7 @@ function Summary(props: SummaryDialogProps) {
           {items.map((item) => (
             <div className='item' key={item.id}>
               <div className='item-name'>
-                {item.item} x{item.quantity}
+                {item.item} x{item.quantity} {item.bag ? '(with bag)' : ''}
               </div>
               <div className='item-cost'>${item.cost}</div>
             </div>
