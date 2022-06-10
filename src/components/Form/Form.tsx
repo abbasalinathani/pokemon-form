@@ -1,8 +1,27 @@
-import { Container, MenuItem, Select, TextField } from '@mui/material';
-import { useState } from 'react';
+import {
+  Chip,
+  Container,
+  ListItem,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import { CustomSlider } from '../../styledComponents/slider';
 import OrderForm from '../OrderForm/OrderForm';
 import './Form.scss';
+
+interface Pokemon {
+  name: string;
+  region: string;
+}
+
+interface CartItem {
+  item: string;
+  quantity: number;
+  cost: number;
+  bag: boolean;
+}
 
 function Form() {
   const [fullName, setFullName] = useState({
@@ -18,13 +37,12 @@ function Form() {
   const [region, setRegion] = useState('');
   const [selectedPokemon, setSelectedPokemon] = useState('');
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [totalCost, setTotalCost] = useState(0);
   const badNewName = 'Input text';
   const minLengthHelperText = 'Please enter at least 3 characters';
   const regions = ['Kanto', 'Jhoto', 'Hoenn'];
-  const pokemons: {
-    name: string;
-    region: string;
-  }[] = [
+  const pokemons: Pokemon[] = [
     { name: 'Bulbasaur', region: regions[0] },
     { name: 'Charmander', region: regions[0] },
     { name: 'Squirtle', region: regions[0] },
@@ -73,6 +91,20 @@ function Form() {
         break;
     }
   };
+
+  const onOrderDialogClose = (
+    item: string,
+    quantity: number,
+    bag: boolean,
+    cost: number
+  ) => {
+    setOrderDialogOpen(false);
+    setCart([...cart, { item, quantity, bag, cost }]);
+  };
+
+  useEffect(() => {
+    console.log(cart);
+  }, [cart]);
 
   return (
     <Container className='container'>
@@ -179,7 +211,26 @@ function Form() {
           </div>
         </div>
 
-        <OrderForm open={orderDialogOpen} />
+        <OrderForm open={orderDialogOpen} onClose={onOrderDialogClose} />
+
+        <div className='chip-container'>
+          {cart.length > 0 &&
+            cart.map((item, index) => (
+              <Chip
+                key={index}
+                label={
+                  <span className='chip-label'>
+                    {item.quantity} {item.item}
+                    {item.quantity > 1 ? 's' : ''}
+                  </span>
+                }
+                className={`chip ${item.bag ? 'chip-with-bag' : ''}`}
+                onDelete={() => {}}
+                clickable={true}
+                onClick={() => {}}
+              />
+            ))}
+        </div>
       </div>
     </Container>
   );

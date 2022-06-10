@@ -44,6 +44,7 @@
       line-height: 17px;
       letter-spacing: 0.46px;
       margin-bottom: 40px;
+      align-self: flex-start;
     }
 
     .bag-question-container {
@@ -60,6 +61,31 @@
         line-height: 19px;
         letter-spacing: 0.15px;
       }
+    }
+
+    .cost-container {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 63px;
+
+      .cost-label,
+      .cost {
+        font-family: Roboto;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 22px;
+        color: #889296;
+      }
+
+      .cost {
+        color: #393B3B;
+      }
+    }
+
+    .add-to-cart-button {
+      width: 200px;
+      margin-bottom: 40px;
     }
   }
 }

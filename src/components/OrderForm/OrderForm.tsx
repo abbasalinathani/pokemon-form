@@ -1,23 +1,73 @@
-import { Container, Dialog, MenuItem, Select, Switch } from '@mui/material';
-import { useState } from 'react';
+import {
+  Container,
+  Dialog,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Switch,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { CustomButton } from '../../styledComponents/button';
 import { CustomSlider } from '../../styledComponents/slider';
 import { CustomSwitch } from '../../styledComponents/switch';
 import './OrderForm.scss';
 
 export interface SimpleDialogProps {
   open: boolean;
+  onClose: (
+    selectedItem: string,
+    quantity: number,
+    needBag: boolean,
+    cost: number
+  ) => void;
+}
+
+interface OrderItem {
+  name: string;
+  cost: number;
 }
 
 function OrderForm(props: SimpleDialogProps) {
-  const { open } = props;
+  const { open, onClose } = props;
   const [selectedItem, setSelectedItem] = useState('');
+  const [quantity, setQuantity] = useState(2);
   const [needBag, setNeedBag] = useState(true);
-  const orderItems = [
-    'Poke Ball',
-    'Great Ball',
-    'Super Potion',
-    'Hyper Potion',
+  const [cost, setCost] = useState(0);
+  const orderItems: OrderItem[] = [
+    { name: 'Poke Ball', cost: 5 },
+    { name: 'Great Ball', cost: 10 },
+    { name: 'Super Potion', cost: 10 },
+    { name: 'Hyper Potion', cost: 20 },
   ];
+
+  useEffect(() => {
+    updateCost();
+  }, [selectedItem, quantity, needBag]);
+
+  const onQuantityChange = (event: Event, newValue: number | number[]) => {
+    setQuantity(newValue as number);
+  };
+
+  const selectedItemChange = (event: SelectChangeEvent) => {
+    setSelectedItem(event.target.value);
+  };
+
+  const needBagChange = () => {
+    setNeedBag(!needBag);
+  };
+
+  const updateCost = () => {
+    let selectedItemCost = orderItems.find(
+      (item) => item.name === selectedItem
+    )?.cost;
+    setCost(
+      selectedItemCost ? selectedItemCost * quantity + (needBag ? 2 : 0) : 0
+    );
+  };
+
+  const closeOrderDialog = () => {
+    onClose(selectedItem, quantity, needBag, cost);
+  };
 
   return (
     <Dialog open={open}>
@@ -30,7 +80,7 @@ function OrderForm(props: SimpleDialogProps) {
 
           <Select
             value={selectedItem}
-            onChange={(event) => setSelectedItem(event.target.value)}
+            onChange={selectedItemChange}
             displayEmpty
             renderValue={(selected: any) => {
               if (selected.length === 0) {
@@ -42,8 +92,8 @@ function OrderForm(props: SimpleDialogProps) {
             variant='filled'
           >
             {orderItems.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
+              <MenuItem value={item.name} key={index}>
+                {item.name}
               </MenuItem>
             ))}
           </Select>
@@ -51,20 +101,30 @@ function OrderForm(props: SimpleDialogProps) {
           <CustomSlider
             valueLabelDisplay='auto'
             aria-label='slider'
-            defaultValue={2}
+            value={quantity}
             className='slider'
             min={1}
             max={10}
+            onChange={onQuantityChange}
           />
           <span className='slider-description'>Select Quantity</span>
 
           <div className='bag-question-container'>
             <div className='bag-question'>I need a bag for that!</div>
-            <CustomSwitch
-              checked={needBag}
-              onChange={() => setNeedBag(!needBag)}
-            />
+            <CustomSwitch checked={needBag} onChange={needBagChange} />
           </div>
+
+          <div className='cost-container'>
+            <div className='cost-label'>Cost:</div>
+            <div className='cost'>${cost}</div>
+          </div>
+
+          <CustomButton
+            className='add-to-cart-button'
+            onClick={closeOrderDialog}
+          >
+            ADD TO CART
+          </CustomButton>
         </div>
       </Container>
     </Dialog>
