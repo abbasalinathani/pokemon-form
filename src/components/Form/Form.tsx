@@ -98,6 +98,10 @@ function Form() {
     }
   };
 
+  const onRangeChange = (event: Event, newValue: number | number[]) => {
+    setRange(newValue as number);
+  };
+
   const onOrderDialogClose = (
     id: string,
     item: string,
@@ -180,6 +184,7 @@ function Form() {
           aria-label='slider'
           className='slider'
           value={range}
+          onChange={onRangeChange}
         />
         <span className='slider-description'>
           How far is your nearest pokemon center? (In KMs)

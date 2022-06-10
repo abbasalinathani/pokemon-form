@@ -45,7 +45,7 @@ function Summary(props: SummaryDialogProps) {
         </div>
         <div className='data'>
           <div className='label'>Range:</div>
-          <div className='value'>{range}</div>
+          <div className='value'>{range} KM(s)</div>
         </div>
         <div className='data'>
           <div className='label'>Region:</div>
