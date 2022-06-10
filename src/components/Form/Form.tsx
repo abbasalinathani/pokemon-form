@@ -1,13 +1,7 @@
-import {
-  Container,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material';
+import { Container, MenuItem, Select, TextField } from '@mui/material';
 import { useState } from 'react';
 import { CustomSlider } from '../../styledComponents/slider';
+import OrderForm from '../OrderForm/OrderForm';
 import './Form.scss';
 
 function Form() {
@@ -22,10 +16,11 @@ function Form() {
     helperText: '',
   });
   const [region, setRegion] = useState('');
+  const [selectedPokemon, setSelectedPokemon] = useState('');
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const badNewName = 'Input text';
   const minLengthHelperText = 'Please enter at least 3 characters';
   const regions = ['Kanto', 'Jhoto', 'Hoenn'];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pokemons: {
     name: string;
     region: string;
@@ -79,10 +74,6 @@ function Form() {
     }
   };
 
-  const handleRegionChange = (event: SelectChangeEvent) => {
-    setRegion(event.target.value);
-  };
-
   return (
     <Container className='container'>
       <div className='form-container'>
@@ -121,6 +112,7 @@ function Form() {
           className='code'
           onBlur={(event) => checkLength(event.target.value, 'codeName')}
         />
+
         <CustomSlider
           valueLabelDisplay='auto'
           aria-label='slider'
@@ -130,9 +122,10 @@ function Form() {
         <span className='slider-description'>
           How far is your nearest pokemon center? (In KMs)
         </span>
+
         <Select
           value={region}
-          onChange={handleRegionChange}
+          onChange={(event) => setRegion(event.target.value)}
           displayEmpty
           renderValue={(selected: any) => {
             if (selected.length === 0) {
@@ -145,13 +138,48 @@ function Form() {
           className='region-select'
           variant='filled'
         >
-          {regions.map((region) => (
-            <MenuItem value={region}>{region}</MenuItem>
+          {regions.map((region, index) => (
+            <MenuItem value={region} key={index}>
+              {region}
+            </MenuItem>
           ))}
         </Select>
-        <div className='choose-starter-pokemon'>
-          Choose your starter pokemon
+        {region && (
+          <div style={{ width: '100%' }}>
+            <div className='choose-starter-pokemon'>
+              Choose your starter pokemon
+            </div>
+            <div className='pokemon-container'>
+              {pokemons
+                .filter((pokemon) => pokemon.region === region)
+                .map((pokemon, index) => (
+                  <div
+                    className={`pokemon-image-container ${
+                      selectedPokemon === pokemon.name ? 'selected-pokemon' : ''
+                    }`}
+                    onClick={() => setSelectedPokemon(pokemon.name)}
+                    key={index}
+                  >
+                    <img
+                      src={require(`../../assets/${pokemon.name}.png`)}
+                      alt=''
+                      key={index}
+                      className='pokemon-image'
+                    />
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        <div className='packing-question-container'>
+          <div className='packing-question'>What do you want to pack?</div>
+          <div className='add-button' onClick={() => setOrderDialogOpen(true)}>
+            <span className='button-text'>+</span>
+          </div>
         </div>
+
+        <OrderForm open={orderDialogOpen} />
       </div>
     </Container>
   );
